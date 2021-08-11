@@ -10,8 +10,8 @@ User will create terraform config with these specifications.
 - 1 Autoscaling group with minSize 2 instances and maxSize 5 instances, scaling rule threshold >= 45% for CPU Usage. These instances will be created in the private subnet.  
 
 ## Prerequisites
-- secret id and secret key
-- installing terraform
+- access key and secret key
+- install terraform
 
 ## Proof Of Concept
 
@@ -101,7 +101,8 @@ data "alicloud_images" "img_list" {
 
 In the final chapter, you will need to add scaling group, scaling rule and its alarm.
 
-You can see that the 'min_size' set to 2 and max_size set to 5. Also, when CPU >= 45%, it will trigger 'add an instance as adjustment'.
+You can see that the 'min_size' set to 2 and max_size set to 5. Also, when CPU >= 40%, it will trigger 'add an instance as adjustment'.
+> Nb. sorry, it's my typo to set threshold to 40%
 ```
 resource "alicloud_ess_scaling_group" "ess_group" {
   min_size           = 2
@@ -143,3 +144,27 @@ resource "alicloud_ess_alarm" "ess_alarm" {
   evaluation_count    = 2
 }
 ```
+
+## Screenshots
+
+1. inside directory
+![image](https://user-images.githubusercontent.com/20719811/129022106-5ecbad61-cc13-41a2-bc8a-37b154e7bbae.png)
+
+2. Export access key and secret key
+![image](https://user-images.githubusercontent.com/20719811/129022192-e3c79d7b-7334-466e-9c0b-244c900cdc99.png)
+
+3. VPC been created with 2 vSwitch
+![image](https://user-images.githubusercontent.com/20719811/129022395-a0a05bb8-04dc-41c4-a3eb-62212b1c51ef.png)
+
+4. Attach NAT to private vSwitch
+![image](https://user-images.githubusercontent.com/20719811/129022478-65ff8de2-0196-4900-9670-0650a75dc2b7.png)
+
+5. Scaling Group with minimum instance 2 and maximum instance 5
+![image](https://user-images.githubusercontent.com/20719811/129022569-5f693f2a-0389-4660-bd1a-3681c14ee478.png)
+
+6. Scaling Rule will trigger instanceAdd 1 instance if reaching threshold
+![image](https://user-images.githubusercontent.com/20719811/129022678-6cb6d029-8ce4-4647-bc57-0adf79922f80.png)
+
+7. Treshold 40, 2 consecutive times, it will trigger scaling rule.
+![image](https://user-images.githubusercontent.com/20719811/129022862-95ee4480-b2f0-4777-a0db-3264a9fe1cee.png)
+
